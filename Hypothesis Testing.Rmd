@@ -7,14 +7,25 @@ knit: (function(input_file, encoding) {
  output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
 author: "Jake Bersabe"
 date: "06/11/2021"
-output: html_document
+output: 
+  html_document:
+    css: "style.css"
+    toc: true
+    toc_float: true
+    
 ---
+
+```{r setup, include=FALSE, fig.align='center'}
+knitr::opts_chunk$set(message = F, warning = F)
+```
+
 
 ```{r include=FALSE}
 data <- read.csv("train.csv")
 library(dplyr)
 library(ggplot2)
 library(corrplot)
+library(printr)
 ```
 
 
@@ -36,12 +47,17 @@ In this section we will try to determine if there are significant relationships 
 
 Let us proceed by testing hypothesis number 1.   
 
-#### **1. Males are more likely to be eligible than females**
+### **1. Males are more likely to be eligible than females**
 
 >Ho: There is no significant relationship between gender and loan status.  
 >Ha: There is a significant relationship between gender and loan status.
 
+<center>
+
 ![](Gender.png "Gender and Loan Status bar graph")
+
+</center>
+
 ```{r, echo=F, message=FALSE}
 data %>% 
   filter(Gender != "") %>% 
@@ -62,12 +78,17 @@ chisq.test(table(data[data$Gender != "",]$Gender,
 **Conclusion:**  
 Since the `p-value = 0.6264` is greater than our chosen significance level (alpha = 0.05), we **do not reject** the null hypothesis. Rather, we conclude that there is not enough evidence to suggest a relationship between gender and loan eligibility.
 
-#### **2. A married applicant is more likely to be eligible for a house loan**
+### **2. A married applicant is more likely to be eligible for a house loan**
 
 >Ho: There is no significant relationship between civil status and eligibility.  
 >Ha: There is a significant relationship between civil status and eligibility.  
 
+<center>
+
 ![](married.png "Civil Status and Loan Status bar graph")
+
+</center>
+
 ```{r, echo=F, message=FALSE}
 data %>% 
   filter(Married != "") %>% 
@@ -94,7 +115,7 @@ We can further examine the relationship by plotting the residuals using the `cor
 
 A positive residual means an attraction (positive association) between the corresponding row and column variables, while a negative residual implies a repulsion (negative association) between the corresponding row and column variables
 
-```{r}
+```{r ,fig.align='center'}
 corrplot(married$residuals,is.corr = F,
          title = "Association between Civil Status and Loan Status",
          mar=c(0,0,2,0),tl.srt=0)
@@ -106,12 +127,16 @@ corrplot(married$residuals,is.corr = F,
 
 
   
-#### **3. An applicant with no dependents is more likely to be eligible for a house loan**
+### **3. An applicant with no dependents is more likely to be eligible for a house loan**
 
 >Ho: There is no significant relationship between number of dependents and eligibility.  
 >Ha: There is a significant relationship between number of dependents and eligibility.
 
+<center>
+
 ![](dependents.png "Dependents and Loan Status bar graph")
+
+</center>
 
 ```{r, echo=F, message=FALSE}
 data %>% 
@@ -133,11 +158,16 @@ chisq.test(table(data[data$Dependents != "",]$Dependents,
 **Conclusion:**  
 Since the `p-value = 0.3679` is greater than our chosen significance level, we **do not reject** the null hypothesis. Rather, we conclude that there is not enough evidence to suggest a relationship between number of dependents and loan eligibility.
 
-#### **4. Graduates are more likely to be eligible for a house loan.**  
+### **4. Graduates are more likely to be eligible for a house loan.**  
 >Ho: There is no significant relationship between education and eligibility.  
 >Ha: There is a significant relationship between education and eligibility.
 
+<center>
+
 ![](education.png "Education and Loan Status bar graph")  
+
+</center>
+
 ```{r echo=F, message=FALSE}
 data %>% 
   group_by(Education, Loan_Status) %>% 
@@ -158,7 +188,7 @@ education
 Since the `p-value = 0.03333` is less than our chosen significance level, we can **reject the null hypothesis**, and conclude that there is a relationship between applicant civil status and loan eligibility.
 
 Let us visualize the residuals to zoom in on the dependencies between the categories.
-```{r}
+```{r, fig.align='center'}
 corrplot(education$residuals,is.corr = F,
          title = "Association between Education and Loan Status",
          mar=c(0,0,2,0),tl.srt=0)
@@ -169,11 +199,15 @@ corrplot(education$residuals,is.corr = F,
 1. Applicant who did not graduate is *strongly associated* with loan ineligibility.  
 2. Applicant who graduated is *associated* with loan eligibility.  
 
-#### **5. Self-employed are less likely to be eligible for a house loan**  
+### **5. Self-employed are less likely to be eligible for a house loan**  
 >Ho: There is no significant relationship between employment type and eligibility.  
 >Ha: There is a significant relationship between employment type and eligibility.  
 
+<center>
+
 ![](selfEmployment.png "Self-employment and Loan Status bar graph")
+
+</center>
 
 ```{r echo=F, message=FALSE}
 data %>% 
@@ -196,11 +230,15 @@ chisq.test(table(data[data$Self_Employed != "",]$Self_Employed,
 Since the `p-value = 0.9557` is greater than our chosen significance level, we **do not reject** the null hypothesis. Rather, we conclude that there is not enough evidence to suggest a relationship between number of dependents and loan eligibility.
 
 
-#### **6. Applicants who apply for less loan amount are more likely to be eligible.**  
+### **6. Applicants who apply for less loan amount are more likely to be eligible.**  
 >Ho: There is no significant relationship between loan amount and eligibility.  
 >Ha: There is a significant relationship between loan amount and eligibility.  
 
+<center>
+
 ![](loanAmount.png "Loan Amount and Loan Status bar graph")  
+
+</center>
 
 ```{r echo=F, message=FALSE}
 data %>% 
@@ -228,11 +266,15 @@ Since the `p-value = 0.3647` is greater than our chosen significance level (alph
 
 
 
-#### **7. Applicants who earn more are more likely to be eligible.**  
+### **7. Applicants who earn more are more likely to be eligible.**  
 >Ho: There is no significant relationship between applicant income and eligibility.  
 >Ha: There is a significant relationship between applicant income and eligibility.  
 
+<center>
+
 ![](applicant.png "Applicant Income and Loan Status bar graph")
+
+</center>
 
 ```{r echo=F, message=FALSE}
 data %>% 
@@ -257,12 +299,16 @@ t.test(data[data$Loan_Status=="Y",]$ApplicantIncome,
 
 Since the `p-value = 0.9129` is greater than our chosen significance level, we **do not reject** the null hypothesis. Rather, we conclude that there is not enough evidence to suggest a relationship between applicant income and loan eligibility.
 
-#### **8. Applicants with higher co-applicant income are more likely to be eligible.**  
+### **8. Applicants with higher co-applicant income are more likely to be eligible.**  
 
 >Ho: There is no significant relationship between co-applicant income and eligibility.  
 >Ha: There is a significant relationship between co-applicant income and eligibility.  
 
+<center>
+
 ![](coapplicant.png "Co-applicant Income and Loan Status bar graph")
+
+</center>
 
 ```{r message=F}
 data %>% 
@@ -289,11 +335,15 @@ Since the `p-value = 0.2591` is greater than our chosen significance level, we d
   
   
   
-#### **9. Applicants who can pay sooner are more eligible.**  
+### **9. Applicants who can pay sooner are more eligible.**  
 >Ho: There is no significant relationship between Loan_Amount_Term and eligibility.  
 >Ha: There is a significant relationship between Loan_Amount_Term and eligibility.  
 
+<center>
+
 ![](term.png "Loan Amount Term and Loan Status bar graph")  
+
+</center>
 
 ```{r message=FALSE}
 data %>% 
@@ -322,11 +372,16 @@ chisq.test(table(datax$Loan_Amount_Term, datax$Loan_Status))
 
 Since the `p-value = 0.09398` is greater than our chosen significance level, we **do not reject** the null hypothesis. Rather, we conclude that there is not enough evidence to suggest a relationship between loan amount term and loan eligibility.  
 
-#### **10. Applicants who met the credit history guidelines are more likely to be eligible for a house loan.**  
+### **10. Applicants who met the credit history guidelines are more likely to be eligible for a house loan.**  
 >Ho: There is no significant relationship between credit history and eligibility.  
 >Ha: There is a significant relationship between credit history and eligibility.  
 
+<center>
+
 ![](credit.png "Credit History and Loan Status bar graph")
+
+</center>
+
 
 ```{r echo=F, message=FALSE}
 data %>% 
@@ -351,7 +406,7 @@ Since the `p-value = 1.370732e-40` is less than our chosen significance level, w
 
 Again, let us visualize the residuals.
 
-```{r}
+```{r, fig.align='center'}
 corrplot(credit$residuals,is.corr = F,
          title = "Association between Credit History and Loan Status",
          mar=c(0,0,2,0),tl.srt=0)
@@ -363,12 +418,16 @@ corrplot(credit$residuals,is.corr = F,
 2. Having credit history is *associated* with loan eligibility.  
 
 
-#### **11. Applicants who apply for Semiurban area are more likely to be eligible for a house loan.**  
+### **11. Applicants who apply for Semiurban area are more likely to be eligible for a house loan.**  
 
 >Ho: There is no significant relationship between property area and eligibility.  
 >Ha: There is a significant relationship between property area and eligibility.  
 
+<center>
+
 ![](property.png "Property Area and Loan Status bar graph")
+
+</center>
 
 ```{r echo=F, message=FALSE}
 data %>% 
@@ -387,7 +446,7 @@ property
 
 Since the `p-value = 0.002136` is less than our chosen significance level, we can `reject the null hypothesis`, and conclude that there is a relationship between applicant civil status and loan eligibility.
 
-```{r}
+```{r, fig.align='center'}
 corrplot(property$residuals,is.corr = F,
          title = "Association between Property Area and Loan Status",
          mar=c(0,0,2,0),tl.srt=0)
@@ -401,11 +460,11 @@ corrplot(property$residuals,is.corr = F,
 ### Summary:
 
 1.	Credit History  
-○	Applicants who passed the guidelines for credit history are more likely to get loan approval.  
+*	Applicants who passed the guidelines for credit history are more likely to get loan approval.  
 2.	Property Area  
-○	House loan applications in Semi-urban property areas, followed by Urban property areas are more likely to get loan approval. One assumption for this could be that properties in these areas may increase in value over time at a faster rate than those in rural areas.
+*	House loan applications in Semi-urban property areas, followed by Urban property areas are more likely to get loan approval. One assumption for this could be that properties in these areas may increase in value over time at a faster rate than those in rural areas.
 3.	Civil Status  
-○	Married applicants are more likely to get loan approval, as a partner may help in paying off the loan.   
+*	Married applicants are more likely to get loan approval, as a partner may help in paying off the loan.   
 4.	Educational Background  
-○	Applicants who graduated are more likely to get loan approval.  
+*	Applicants who graduated are more likely to get loan approval.  
 
